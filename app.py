@@ -23,6 +23,7 @@ def highlight_numbers(pdf_path, numbers, output_path, number_type):
             found_numbers.add(number)  # Add found number to the found_numbers set
             for match in matches:
                 highlight = first_page.add_highlight_annot(match)
+                highlight.set_colors(stroke=(1, 0, 0)) # RED Highlight Colour
                 highlight.update()
 
     pages_to_keep.append(0)  # Always keep the first page
@@ -44,6 +45,7 @@ def highlight_numbers(pdf_path, numbers, output_path, number_type):
                 found_numbers.add(number)  # Add found number to the found_numbers set
                 for match in matches:
                     highlight = page.add_highlight_annot(match)
+                    highlight.set_colors(stroke=(1, 0, 0)) # RED Highlight Colour
                     highlight.update()
 
         if contains_number:

@@ -9,7 +9,7 @@ HIGHLIGHT_COLORS = {
     "Yellow": (1, 1, 0),
     "Red": (1, 0, 0),
     "Green": (0, 1, 0),
-    "Light Blue": (0.68, 0.85, 0.9),  # LightSkyBlue approximation
+    "Light Blue": (0.68, 0.85, 0.9),
     "Dark Blue": (0, 0, 0.55)
 }
 
@@ -31,7 +31,7 @@ def highlight_numbers(pdf_path, numbers, output_path, number_type, highlight_col
             found_numbers.add(number)
             for match in matches:
                 highlight = first_page.add_highlight_annot(match)
-                highlight.set_colors(stroke=highlight_color)  # Dynamic Highlight Colour
+                highlight.set_colors(stroke=highlight_color)
                 highlight.update()
 
     pages_to_keep.append(0)
@@ -84,7 +84,7 @@ st.title("UAN & ESIC Number Marker")
 selected_color_name = st.selectbox(
     "Select Highlight Color",
     options=list(HIGHLIGHT_COLORS.keys()),
-    index=0  # Default Yellow
+    index=3  # Default Light Blue
 )
 selected_color = HIGHLIGHT_COLORS[selected_color_name]
 

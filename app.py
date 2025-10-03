@@ -16,42 +16,36 @@ HIGHLIGHT_COLORS = {
 def highlight_numbers(pdf_path, numbers, output_path, number_type, highlight_color):
     pdf_document = fitz.open(pdf_path)
 
-    pages_to_keep = []
+    pages_to_keep = [0]
     total_matches = 0
     not_found_numbers = set(numbers)
     found_numbers = set()
 
-    first_page = pdf_document.load_page(0)
-    first_page_matches = 0
-    for number in numbers:
-        matches = first_page.search_for(number)
-        if matches:
-            first_page_matches += len(matches)
-            not_found_numbers.discard(number)
-            found_numbers.add(number)
-            for match in matches:
-                highlight = first_page.add_highlight_annot(match)
-                highlight.set_colors(stroke=highlight_color)
-                highlight.update()
-
-    pages_to_keep.append(0)
-    total_matches += first_page_matches
-
-    for page_number in range(1, len(pdf_document)):
+    for page_number in range(len(pdf_document)):
         page = pdf_document.load_page(page_number)
+        page_text = page.get_text()  # Extract all text from the page once
         contains_number = False
         page_matches = 0
+
         for number in numbers:
-            matches = page.search_for(number)
-            if matches:
-                contains_number = True
-                page_matches += len(matches)
-                not_found_numbers.discard(number)
-                found_numbers.add(number)
-                for match in matches:
-                    highlight = page.add_highlight_annot(match)
-                    highlight.set_colors(stroke=highlight_color)
-                    highlight.update()
+            start = 0
+            while True:
+                # Find the number in the page text from the current position
+                idx = page_text.find(number, start)
+                if idx == -1:
+                    break
+                matches = page.search_for(number)
+                if matches:
+                    contains_number = True
+                    page_matches += len(matches)
+                    not_found_numbers.discard(number)
+                    found_numbers.add(number)
+                    for match in matches:
+                        highlight = page.add_highlight_annot(match)
+                        highlight.set_colors(stroke=highlight_color)
+                        highlight.update()
+                    break  # break while loop for current number after processing its matches
+                start = idx + 1
 
         if contains_number:
             pages_to_keep.append(page_number)
@@ -80,7 +74,6 @@ def highlight_numbers(pdf_path, numbers, output_path, number_type, highlight_col
 
 st.title("UAN & ESIC Number Marker")
 
-# Highlight color selector with default Yellow
 selected_color_name = st.selectbox(
     "Select Highlight Color",
     options=list(HIGHLIGHT_COLORS.keys()),

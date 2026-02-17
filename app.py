@@ -110,13 +110,15 @@ if uan_pdf_file and esic_pdf_file and excel_file:
         st.error(f"Columns '{uan_column}' or '{esic_column}' not found in the Excel file.")
         raise Exception(f"Columns '{uan_column}' or '{esic_column}' not found in the Excel file.")
 
-    df = df[df[uan_column].notna() & (df[uan_column] != "EXEMPTED")]
-    df[uan_column] = df[uan_column].astype(float).astype(int).astype(str).str.strip()
-    uan_numbers = df[uan_column].tolist()
+    # Filter UAN numbers independently
+    df_uan = df[df[uan_column].notna() & (df[uan_column] != "EXEMPTED")]
+    df_uan[uan_column] = df_uan[uan_column].astype(float).astype(int).astype(str).str.strip()
+    uan_numbers = df_uan[uan_column].tolist()
 
-    df = df[df[esic_column].notna() & (df[esic_column] != "EXEMPTED")]
-    df[esic_column] = df[esic_column].astype(float).astype(int).astype(str).str.strip()
-    esic_numbers = df[esic_column].tolist()
+    # Filter ESI numbers independently (don't modify the original df)
+    df_esic = df[df[esic_column].notna() & (df[esic_column] != "EXEMPTED")]
+    df_esic[esic_column] = df_esic[esic_column].astype(float).astype(int).astype(str).str.strip()
+    esic_numbers = df_esic[esic_column].tolist()
 
     highlight_numbers(uan_pdf_temp_path, uan_numbers, output_uan_path, "UAN", selected_color)
     highlight_numbers(esic_pdf_temp_path, esic_numbers, output_esic_path, "ESIC", selected_color)

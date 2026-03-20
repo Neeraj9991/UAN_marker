@@ -135,7 +135,7 @@ def highlight_numbers(pdf_path, numbers, output_path, number_type, highlight_col
     """Search for numbers in a PDF, highlight them, and return stats."""
     pdf_document = fitz.open(pdf_path)
 
-    pages_to_keep = [0]
+    pages_to_keep = {0}  # use a set to avoid duplicates
     total_matches = 0
     not_found_numbers = set(numbers)
     found_numbers = set()
@@ -166,12 +166,12 @@ def highlight_numbers(pdf_path, numbers, output_path, number_type, highlight_col
                 start = idx + 1
 
         if contains_number:
-            pages_to_keep.append(page_number)
+            pages_to_keep.add(page_number)
         total_matches += page_matches
 
     # Save trimmed PDF
     new_pdf = fitz.open()
-    for page_number in pages_to_keep:
+    for page_number in sorted(pages_to_keep):
         new_pdf.insert_pdf(pdf_document, from_page=page_number, to_page=page_number)
     new_pdf.save(output_path)
     new_pdf.close()
